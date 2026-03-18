@@ -1,0 +1,29 @@
+/* Create folder: mkdir -p public */
+/* Create file:   public/custom.css */
+
+/* Smoother fonts */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Step indicators — subtle purple accent */
+.step {
+    border-left: 2px solid #7c6ef0 !important;
+}
+
+/* Message bubbles — better readability */
+.message-content {
+    line-height: 1.7 !important;
+}
+
+/* Code blocks inside messages */
+.message-content pre {
+    border-radius: 8px !important;
+}
+
+/* Starter cards — hover lift */
+.starter-card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
