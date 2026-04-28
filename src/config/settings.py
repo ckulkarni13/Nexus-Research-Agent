@@ -26,7 +26,11 @@ class Settings(BaseSettings):
     )
     groq_model: str = Field(
         default="llama-3.3-70b-versatile",
-        description="Groq model name",
+        description="Groq model for heavy tasks (synthesizer, critic)",
+    )
+    groq_model_light: str = Field(
+        default="llama-3.1-8b-instant",
+        description="Groq model for light tasks (planner)",
     )
 
     # ── Google Gemini (backup — free) ───────────────────
@@ -36,7 +40,11 @@ class Settings(BaseSettings):
     )
     gemini_model: str = Field(
         default="gemini-2.5-flash",
-        description="Gemini model name",
+        description="Gemini model for heavy tasks",
+    )
+    gemini_model_light: str = Field(
+        default="gemini-2.0-flash-lite",
+        description="Gemini model for light tasks",
     )
 
     # ── Ollama (offline/local) ──────────────────────────
@@ -46,7 +54,11 @@ class Settings(BaseSettings):
     )
     ollama_model: str = Field(
         default="llama3.1:8b",
-        description="Ollama model name",
+        description="Ollama model for heavy tasks",
+    )
+    ollama_model_light: str = Field(
+        default="llama3.1:8b",
+        description="Ollama model for light tasks (same if only one available)",
     )
 
     # ── Embeddings ──────────────────────────────────────
@@ -66,6 +78,20 @@ class Settings(BaseSettings):
     # ── Logging ─────────────────────────────────────────
     log_level: str = Field(default="INFO")
     log_format: str = Field(default="pretty")
+
+    # ── LangSmith Tracing (optional) ─────────────────────
+    langchain_tracing_v2: bool = Field(
+        default=False,
+        description="Enable LangSmith tracing for observability",
+    )
+    langchain_api_key: str = Field(
+        default="",
+        description="LangSmith API key",
+    )
+    langchain_project: str = Field(
+        default="nexus-research-agent",
+        description="LangSmith project name",
+    )
 
     model_config = {
         "env_file": ".env",

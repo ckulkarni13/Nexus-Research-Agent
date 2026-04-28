@@ -11,7 +11,7 @@ prompt = ChatPromptTemplate.from_messages([
 
 
 def critic_node(state: ResearchState) -> dict:
-    llm = get_llm(temperature=0.2)
+    llm = get_llm(temperature=0.2).bind(max_tokens=500)
 
     papers_text = "\n".join(state["retrieved_papers"].values())
 

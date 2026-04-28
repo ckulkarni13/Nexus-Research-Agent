@@ -5,6 +5,9 @@ Call get_llm() anywhere in the project. It returns the configured
 LLM based on LLM_PROVIDER in .env. Switch providers by changing
 one line — zero code changes in agents.
 
+Instances are cached by (provider, temperature) so repeated calls
+reuse the same HTTP session and connection pool.
+
 Usage in any agent file:
     from src.core.llm import get_llm
     llm = get_llm()                    # Uses default temp
@@ -16,15 +19,25 @@ Switch provider in .env:
     LLM_PROVIDER=ollama    → Local Llama 3.1 8B (offline)
 """
 
+from functools import lru_cache
 from src.config.settings import settings
 
 
-def get_llm(temperature: float = 0.3):
-    """Return the configured LLM instance.
+@lru_cache(maxsize=16)
+def get_llm(temperature: float = 0.3, tier: str = "heavy"):
+    """Return a cached LLM instance.
 
     This is the ONLY place in the entire project that
     imports provider-specific LLM classes. Every agent
     calls this function instead of importing directly.
+
+    Args:
+        temperature: Sampling temperature.
+        tier: "light" for cheap/fast tasks (planner),
+              "heavy" for quality-critical tasks (synthesizer, critic).
+
+    Instances are cached by (temperature, tier) so the same
+    combo reuses the connection pool.
     """
     provider = settings.llm_provider
 
@@ -35,8 +48,9 @@ def get_llm(temperature: float = 0.3):
                 "GROQ_API_KEY not set in .env. "
                 "Get a free key at https://console.groq.com"
             )
+        model = settings.groq_model_light if tier == "light" else settings.groq_model
         return ChatGroq(
-            model=settings.groq_model,
+            model=model,
             api_key=settings.groq_api_key,
             temperature=temperature,
         )
@@ -48,16 +62,18 @@ def get_llm(temperature: float = 0.3):
                 "GOOGLE_API_KEY not set in .env. "
                 "Get a free key at https://aistudio.google.com"
             )
+        model = settings.gemini_model_light if tier == "light" else settings.gemini_model
         return ChatGoogleGenerativeAI(
-            model=settings.gemini_model,
+            model=model,
             google_api_key=settings.google_api_key,
             temperature=temperature,
         )
 
     elif provider == "ollama":
         from langchain_ollama import ChatOllama
+        model = settings.ollama_model_light if tier == "light" else settings.ollama_model
         return ChatOllama(
-            model=settings.ollama_model,
+            model=model,
             base_url=settings.ollama_base_url,
             temperature=temperature,
         )

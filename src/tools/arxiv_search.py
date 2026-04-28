@@ -19,7 +19,7 @@ def search_arxiv(query: str, max_results: int = 0) -> str:
             f"Title: {paper.title}\n"
             f"Authors: {', '.join(a.name for a in paper.authors[:3])}\n"
             f"Date: {paper.published.strftime('%Y-%m-%d')}\n"
-            f"Abstract: {paper.summary[:400]}\n"
+            f"Abstract: {paper.summary[:200]}\n"
             f"URL: {paper.entry_id}"
         )
     return "\n\n---\n\n".join(results) if results else "No papers found."

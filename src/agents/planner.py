@@ -11,7 +11,7 @@ prompt = ChatPromptTemplate.from_messages([
 
 
 def planner_node(state: ResearchState) -> dict:
-    llm = get_llm(temperature=0.3)
+    llm = get_llm(temperature=0.3, tier="light").bind(max_tokens=200)
     chain = prompt | llm
     response = chain.invoke({"query": state["query"]})
 
