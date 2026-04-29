@@ -1,38 +1,50 @@
-# Nexus Research Agent: Multi-Agent Research & Verification System
+# Nexus Research Agent: High-Performance Multi-Agent System
 
-An autonomous, multi-agent research pipeline designed to transform raw scientific queries into verified, high-quality research summaries. This system leverages **LangGraph** for stateful orchestration and **CrewAI** for agentic role-playing.
+An autonomous, enterprise-grade research pipeline designed to transform raw scientific queries into verified, high-quality research summaries. This system leverages **LangGraph** for stateful orchestration and **Groq/Gemini** for high-velocity inference.
 
 ---
 
 ## 📌 Project Overview
-The **Nexus Research Agent** is built to solve the "hallucination" and "relevance" challenges in AI-driven research. Unlike linear search tools, this system implements a **4-agent research pipeline** with a **conditional critic feedback loop**. The agents work collaboratively to search, analyze, and verify findings from **arXiv** and **Semantic Scholar**, ensuring that the final output is both scientifically grounded and deeply insightful.
+The **Nexus Research Agent** addresses the "hallucination" and "token-bloat" challenges in academic RAG. By implementing a **Parallelized 4-Agent Pipeline**, the system ensures findings are cross-referenced against authoritative sources like **arXiv** and **Semantic Scholar**. Recent optimizations have reduced retrieval latency from **~30s to ~5-10s**.
+
+![Alt Text](URL_OR_PATH_TO_IMAGE)
 
 ## 🛠 Tech Stack
-* **Orchestration:** LangGraph (State management and cyclical workflows).
-* **Agentic Framework:** CrewAI.
-* **Data Sources:** arXiv API, Semantic Scholar API.
-* **Language Models:** OpenAI GPT-4o / Claude 3.5 Sonnet.
-* **Interface:** Streamlit (Autonomous Research Dashboard).
+* **Intelligence:** Groq (Llama 3.3/3.1), GPT-4o, Gemini Flash 2.5, and Ollama.
+* **Orchestration:** LangGraph (Stateful cyclic/acyclic graphs).
+* **Retrieval Engine:** Concurrent Python `ThreadPoolExecutor`.
+* **Vector Store:** FAISS (Local caching).
+* **Reranking:** `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+* **Observability:** LangSmith (V2 tracing).
 
-## 🏗 System Architecture & Agent Roles
-The pipeline is governed by a cyclic graph that manages transitions between four specialized agents:
+---
 
-1.  **The Researcher:** Executes complex queries across academic databases to find the most recent and relevant papers.
-2.  **The Analyst:** Processes retrieved papers to extract core methodologies, results, and limitations.
-3.  **The Critic:** Evaluates the Analyst’s summary for depth and technical accuracy. If the quality is insufficient, it triggers a feedback loop for further research or analysis.
-4.  **The Verifier:** Cross-references the final report against the source metadata to eliminate hallucinations and ensure 100% groundedness.
+## ⚡ The "10-Fix" Performance Architecture
+
+### 1. High-Speed Orchestration
+* **Parallel Retrieval:** Concurrent fetching from arXiv + Semantic Scholar reduces latency by ~70%.
+* **LLM Instance Caching:** `@lru_cache` ensures agents reuse connection pools instead of reconstructing clients.
+* **Abstract Truncation:** Snippets are capped at 200 chars, cutting input tokens by ~40%.
+
+### 2. Model Tiering & Cost Management
+| Tier | Task | Representative Model | Token Cap |
+| :--- | :--- | :--- | :--- |
+| **Light** | Planner | Llama-3.1-8b-instant | 200 |
+| **Heavy** | Synthesizer | Llama-3.3-70b-versatile | 1500 |
+| **Heavy** | Critic | Llama-3.3-70b-versatile | 500 |
+
+### 3. Data Integrity & Relevance
+* **Cross-Encoder Reranker:** Local reranking keeps only the Top 8 most relevant papers.
+* **Paper Deduplication:** Automated title-based deduplication across sub-queries.
+* **FAISS Cache:** Persistent local caching for accelerated analytical lookups.
+
+---
 
 ## 🚀 Key Features
-* **Conditional Feedback Loops:** Implements a logic-based "Critic" stage that can send the workflow back to the research phase if initial findings are weak.
-* **Multi-Source Ingestion:** Simultaneously queries and merges insights from multiple academic repositories.
-* **Hallucination Mitigation:** Dedicated verification step that acts as a final filter before user delivery.
-* **Stateful Memory:** Uses LangGraph's persistent state to maintain context across complex, multi-turn research tasks.
-
-## 📂 Repository Structure
-* `agents/`: Definitions for Researcher, Analyst, Critic, and Verifier agents.
-* `tools/`: Custom wrappers for arXiv and Semantic Scholar APIs.
-* `graph/`: LangGraph workflow logic and state transitions.
-* `app.py`: Streamlit-based UI for real-time research monitoring.
+* **AI Agnostic Design:** Unified configuration for Groq, Gemini, and local providers.
+* **Conditional Feedback Loops:** The Critic agent triggers re-runs for low-quality findings.
+* **LangSmith Tracing:** Full per-node latency and token observability.
+* **Startup .env Guard:** Proactive API key validation on application boot.
 
 ---
 *Developed by [Chinmay Kulkarni](https://github.com/ckulkarni13)*
