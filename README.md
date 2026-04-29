@@ -7,7 +7,7 @@ An autonomous, enterprise-grade research pipeline designed to transform raw scie
 ## 📌 Project Overview
 The **Nexus Research Agent** addresses the "hallucination" and "token-bloat" challenges in academic RAG. By implementing a **Parallelized 4-Agent Pipeline**, the system ensures findings are cross-referenced against authoritative sources like **arXiv** and **Semantic Scholar**. Recent optimizations have reduced retrieval latency from **~30s to ~5-10s**.
 
-![Alt Text](URL_OR_PATH_TO_IMAGE)
+![Nexus Architecture Diagram](flow-nexus.png)
 
 ## 🛠 Tech Stack
 * **Intelligence:** Groq (Llama 3.3/3.1), GPT-4o, Gemini Flash 2.5, and Ollama.
