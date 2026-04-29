@@ -33,6 +33,7 @@ langchain-huggingface>=0.1.0  # HuggingFace embeddings integration
 sentence-transformers>=3.0.0  # Embedding models (runs locally)
 
 # --- Chat UI ---
+streamlit>=1.40.0
 chainlit>=2.0.0
 
 # --- Configuration ---
